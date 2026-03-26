@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, Body
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.spam import check_spam
+from pydantic import BaseModel
 
 # FastAPI 기반 웹 앱 생성
 # /docs (Swagger UI)에 표기되는 이름
@@ -16,15 +17,12 @@ def home():
     with open("static/index.html", encoding="utf-8") as f:
         return f.read()
 
+class ClassifyRequest(BaseModel):
+    text: str
+
 @app.post("/classify")
-# async def classify(request: Request):
-# payload = await request.json()
-# 그래서 Body를 활용해 미리 어떤 유형이 올지 명세하기.
-async def classify(
-payload: dict = Body(..., example={"text": "Win a FREE prize now, click!"})
-):
-    text = payload["text"]
-    text = payload["text"]
+async def classify(payload: ClassifyRequest):
+    text = payload.text
     label, score = check_spam(text)
     
     return {
