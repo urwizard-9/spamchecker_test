@@ -25,9 +25,9 @@
 
             fetch("/classify", {
                 method: "POST",
-                // headers: {  사전에 해결했던 문제를 실습을 수행하기 위해 주석처리 진행
-                //     "Content-Type": "application/json"
-                // },
+                headers: {  //문제 해결을 위한 주석처리 제거
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ text })
             })
                 .then(res => res.json())
