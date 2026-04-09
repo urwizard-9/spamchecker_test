@@ -32,4 +32,4 @@ async def classify(payload: ClassifyRequest):
 # 실행은 운영 환경의 책임으로 남기기 위해 만들지 X
 # http://127.0.0.1:8000 접속
 # if __name__ == "__main__":
-# uvicorn.run(app, host="127.0.0.1", port=8000)
+#     uvicorn.run(app, host="127.0.0.1", port=8000)
