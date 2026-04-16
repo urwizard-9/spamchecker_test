@@ -1,7 +1,7 @@
 def check_spam(text: str) -> str:
     text = text.lower().strip()
     if text == "":
-        return "ham"
+        return "ham",0 #dict 반환 안한 오류 수정
     spam_keywords = [
     "free", "win", "winner", "prize", "click",
     "buy now", "urgent", "cash", "money", "offer", "deal"
