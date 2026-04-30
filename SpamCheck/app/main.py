@@ -40,8 +40,7 @@ async def classify(payload: ClassifyRequest):
     logger.info(f"CALL /classify | text='{text}' | len={len(text)}")
 
     try:
-        if text =="crash":
-            raise RuntimeError("의도적 장애 추가")
+        #의도적 장애 코드 삭제
         label, score = check_spam(text)
         # (B) 정상 처리 결과도 짧게 기록
         logger.info(f"OK /classify | label={label} score={score}")
