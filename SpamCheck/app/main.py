@@ -4,7 +4,10 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.spam import check_spam
 from pydantic import BaseModel
+from app.issue import *
 import logging
+import traceback
+
 # 1) 로그 포맷: 시간 + 레벨 + 메시지
 logging.basicConfig(
     level=logging.INFO,
@@ -48,7 +51,23 @@ async def classify(payload: ClassifyRequest):
         logger.exception(
             f"FAIL /classify | text='{text}' | error={type(e).__name__}: {e}"
         )
-        # (D) 사용자 응답은 심플하게
+        # (D) GitHub Issue 자동 생성
+        tb = traceback.format_exc()
+        title = f"[Prod Error] /classify failed: {type(e).__name__}"
+        body = (
+            f"## Summary\n"
+            f"- endpoint: /classify\n"
+            f"- input(text, short): `{text}`\n"
+            f"- input length: {len(text)}\n\n"
+            f"## Exception\n"
+            f"- type: {type(e).__name__}\n"
+            f"- message: {str(e)}\n\n"
+            f"## Traceback (line info)\n"
+            f"```text\n{tb}\n```"
+        )
+        create_github_issue(title, body, logger)
+        
+        # (F) 사용자 응답은 심플하게
         return {"label": "Internal Server Error", "score": -1}
     return {
         "label": label, "score": score
