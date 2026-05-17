@@ -2,11 +2,13 @@
 from fastapi import FastAPI, Request, Body
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from app.spam import check_spam
 from pydantic import BaseModel
 from app.issue import *
 import logging
 import traceback
+
+from app.config import MODEL_MODE
+from app.spam import check_spam_rules, check_spam_ml
 
 # 1) 로그 포맷: 시간 + 레벨 + 메시지
 logging.basicConfig(
@@ -21,9 +23,7 @@ logger = logging.getLogger("spamcheck")
 # FastAPI 기반 웹 앱 생성
 # /docs (Swagger UI)에 표기되는 이름
 app = FastAPI(title="SpamCheck Web")
-# 정적 HTML 서빙: static 안에 파일들을 URL로 접근가능하게 해라
-# {URL}/static/…… 으로 접근 가능하게
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # 메인 페이지 (/) 처리 : “/”로 접속 시 처리할 작업
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -40,8 +40,12 @@ async def classify(payload: ClassifyRequest):
     logger.info(f"CALL /classify | text='{text}' | len={len(text)}")
 
     try:
-        #의도적 장애 코드 삭제
-        label, score = check_spam(text)
+        # label, score = check_spam(text)
+        if MODEL_MODE == "ml":
+            label, score = check_spam_ml(text)
+        else:
+            label, score = check_spam_rules(text)
+
         # (B) 정상 처리 결과도 짧게 기록
         logger.info(f"OK /classify | label={label} score={score}")
     except Exception as e:
