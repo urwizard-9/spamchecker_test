@@ -1,8 +1,8 @@
 # test_model.py
 import os
 import joblib
-# 모델 파일 절대경로
-MODEL_PATH = r"C:\Users\lemon\Desktop\aiPipeLinePractice\SpamCheck\ml\artifacts\spam_model.joblib"
+# __file__ 기준 경로: Windows/Linux 모두 동작
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "ml", "artifacts", "spam_model.joblib")
 
 def test_trained_model_exists():
     assert os.path.exists(MODEL_PATH)
